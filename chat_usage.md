@@ -9,47 +9,72 @@ This document describes how to use the MCP (Model Control Protocol) tools. There
 
 The following diagram illustrates the application's architecture and data flow:
 
-```mermaid
-flowchart TD
-    %% Define direction
-    direction TD
-    
-    subgraph Frontend
-        A[User Interface] --> B[ChatForm Component]
-        B --> C[User Input]
-        C -->|Submit| D[useChat Hook]
-    end
+```plantuml
+@startuml
+skinparam backgroundColor transparent
+skinparam componentStyle rectangle
 
-    subgraph API_Layer
-        D -->|POST| E[API Chat Route]
-        E -->|Fetch| F[MCP Tools]
-        E -->|Create| G[OpenAI Chat Completion]
-        G -->|Stream| H[Response Stream]
-    end
+package "Frontend" {
+  [User Interface] as UI
+  [ChatForm Component] as ChatForm
+  [User Input] as Input
+  [useChat Hook] as Hook
+}
 
-    subgraph Components
-        B -->|Render| I[Message List]
-        B -->|Render| J[Input Form]
-        B -->|State| K[Loading State]
-    end
+package "API Layer" {
+  [API Chat Route] as Route
+  [MCP Tools] as Tools
+  [OpenAI Chat Completion] as OpenAI
+  [Response Stream] as Stream
+}
 
-    subgraph External_Services
-        F -->|Connect| L[MCP Server]
-        G -->|API Call| M[OpenAI API]
-    end
+package "Components" {
+  [Message List] as MsgList
+  [Input Form] as Form
+  [Loading State] as State
+}
 
-    subgraph Data_Flow
-        H -->|SSE| D
-        D -->|Update| I
-        J -->|Update| C
-    end
+package "External Services" {
+  [MCP Server] as MCP
+  [OpenAI API] as OpenAIAPI
+}
 
-    %% Styling
-    style Frontend fill:#f9f,stroke:#333,stroke-width:2px
-    style API_Layer fill:#bbf,stroke:#333,stroke-width:2px
-    style Components fill:#bfb,stroke:#333,stroke-width:2px
-    style External_Services fill:#fbb,stroke:#333,stroke-width:2px
-    style Data_Flow fill:#ddd,stroke:#333,stroke-width:2px
+package "Data Flow" {
+  [SSE] as SSE
+}
+
+' Frontend connections
+UI --> ChatForm
+ChatForm --> Input
+Input --> Hook : "Submit"
+
+' API Layer connections
+Hook --> Route : "POST"
+Route --> Tools : "Fetch"
+Route --> OpenAI : "Create"
+OpenAI --> Stream : "Stream"
+
+' Component connections
+ChatForm --> MsgList : "Render"
+ChatForm --> Form : "Render"
+ChatForm --> State : "State"
+
+' External Service connections
+Tools --> MCP : "Connect"
+OpenAI --> OpenAIAPI : "API Call"
+
+' Data Flow connections
+Stream --> Hook : "SSE"
+Hook --> MsgList : "Update"
+Form --> Input : "Update"
+
+skinparam package {
+  BackgroundColor<<Frontend>> #f9f9f9
+  BorderColor<<Frontend>> #333333
+  BorderThickness<<Frontend>> 2
+}
+
+@enduml
 ```
 
 The diagram shows:
