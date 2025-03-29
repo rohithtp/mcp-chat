@@ -10,15 +10,18 @@ This document describes how to use the MCP (Model Control Protocol) tools. There
 The following diagram illustrates the application's architecture and data flow:
 
 ```mermaid
-graph TD
+flowchart TD
+    %% Define direction
+    direction TD
+    
     subgraph Frontend
         A[User Interface] --> B[ChatForm Component]
-        B --> C{User Input}
+        B --> C[User Input]
         C -->|Submit| D[useChat Hook]
     end
 
     subgraph API_Layer
-        D -->|POST| E[/api/chat Route]
+        D -->|POST| E[API Chat Route]
         E -->|Fetch| F[MCP Tools]
         E -->|Create| G[OpenAI Chat Completion]
         G -->|Stream| H[Response Stream]
@@ -41,6 +44,7 @@ graph TD
         J -->|Update| C
     end
 
+    %% Styling
     style Frontend fill:#f9f,stroke:#333,stroke-width:2px
     style API_Layer fill:#bbf,stroke:#333,stroke-width:2px
     style Components fill:#bfb,stroke:#333,stroke-width:2px
