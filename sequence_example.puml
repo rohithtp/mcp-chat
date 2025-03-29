@@ -1,0 +1,31 @@
+@startuml
+title Authentication Sequence
+
+actor User
+participant "Frontend" as FE
+participant "API Server" as API
+database "Database" as DB
+
+User -> FE: Login Request
+activate FE
+
+FE -> API: POST /auth/login
+activate API
+
+API -> DB: Query User
+activate DB
+DB --> API: Return User Data
+deactivate DB
+
+alt Successful Login
+    API --> FE: Return JWT Token
+    FE --> User: Login Success
+else Invalid Credentials
+    API --> FE: Auth Error
+    FE --> User: Login Failed
+end
+
+deactivate API
+deactivate FE
+
+@enduml 
